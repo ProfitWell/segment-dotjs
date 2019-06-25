@@ -5,7 +5,7 @@ var sandbox = require('@segment/clear-env');
 var tester = require('@segment/analytics.js-integration-tester');
 var ProfitWell = require('../lib');
 
-describe('Profit well', function() {
+describe('Profitwell', function() {
   var analytics;
   var profitwell;
   var options = {
@@ -49,16 +49,22 @@ describe('Profit well', function() {
         analytics.initialize();
         analytics.assert(window.profitwell instanceof Function);
       });
+      it('should call start on initialize', function() {
+        analytics.stub(window, 'profitwell');
+        analytics.identify('123', {
+          email: 'mycoolemail@pw.com'
+        });
+        analytics.initialize();
+        analytics.called(window.profitwell, 'start', {
+          user_email: 'mycoolemail@pw.com'
+        });
+      });
 
-      it('should call init with the user\'s email', function() {
+      it('should call empty start on initialize', function() {
         analytics.stub(window, 'profitwell');
         analytics.spy(window.profitwell);
-        setTimeout(function() {
-          analytics.initialize();
-          analytics.called(window.profitwell, 'start', {
-            user_email: 'gottaketchumall@poke.mon'
-          });
-        }, 1000);
+        analytics.initialize();
+        analytics.called(window.profitwell, 'start', {});
       });
     });
   });
