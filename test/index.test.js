@@ -51,18 +51,18 @@ describe('Profitwell', function() {
       });
 
       it('should call start with email on initialize', function() {
-        addTraitsToStorage()
+        addTraitsToStorage();
         analytics.initialize();
 
         analytics.called(profitwell.start, testEmail);
       });
 
       it('should call start with nothing on anonymous initialize', function() {
-        profitwell.options.anonymousOnly = true;
+        profitwell.options.siteType = 'marketing';
         analytics.initialize();
 
         analytics.called(profitwell.start);
-      })
+      });
     });
 
     describe('#start', function() {
@@ -80,6 +80,32 @@ describe('Profitwell', function() {
         profitwell.start();
 
         analytics.called(window.profitwell, 'start', {});
+      });
+
+      it('should not call start more than once', function() {
+        profitwell.start(testEmail);
+        profitwell.start('another@pw.com');
+
+        analytics.called(window.profitwell, 'start', { user_email: testEmail });
+      });
+
+      it('should not call start more than once when initialized with email', function(done) {
+        addTraitsToStorage();
+        analytics.initialize();
+
+        analytics.called(window.profitwell, 'start', { user_email: testEmail });
+
+        analytics.once('ready', function() {
+          try {
+            analytics.stub(window, 'profitwell');
+            analytics.identify(testEmail);
+  
+            analytics.didNotCall(window.profitwell, 'start');
+            done();
+          } catch (ex) {
+            done(ex);
+          }
+        });
       });
     });
   });
@@ -110,6 +136,7 @@ describe('Profitwell', function() {
     // this is a hack to get analytics to initialize a user with an email
     localStorage.setItem(
       'ajs_user_traits', 
+      // eslint-disable-next-line no-restricted-globals
       JSON.stringify({ email: testEmail })
     );
   }
