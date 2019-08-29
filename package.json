@@ -1,7 +1,7 @@
 {
   "name": "@profitwell/analytics.js-integration",
   "description": "The Profitwell DotJS analytics.js integration.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "keywords": [
     "analytics.js",
     "analytics.js-integration",
