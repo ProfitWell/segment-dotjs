@@ -12,6 +12,7 @@ describe('Profitwell', function() {
     publicApiToken: '123123123'
   };
   var testEmail = 'testEmail@pw.com';
+  var testToken = 'test_token';
 
   beforeEach(function() {
     analytics = new Analytics();
@@ -36,6 +37,7 @@ describe('Profitwell', function() {
       beforeEach(function() {
         analytics.stub(profitwell, 'load');
         analytics.stub(profitwell, 'start');
+        analytics.stub(window, 'profitwell');
       });
 
       it('should call load on initialize', function() {
@@ -48,6 +50,14 @@ describe('Profitwell', function() {
         analytics.initialize();
 
         analytics.assert(window.profitwell instanceof Function);
+      });
+
+      it('should call auth_token with the token', () => {
+        profitwell.options.publicApiToken = testToken;
+
+        analytics.initialize();
+
+        analytics.called(window.profitwell, 'auth_token', testToken);
       });
 
       it('should call start with email on initialize', function() {
